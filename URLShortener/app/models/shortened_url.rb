@@ -32,7 +32,7 @@ class ShortenedUrl < ActiveRecord::Base
 
     old_urls = ShortenedUrl.all.where('id NOT IN (?)', new_visit_ids)
 
-    old_urls.each(&:destroy)
+    qold_urls.each(&:destroy)
   end
 
   def self.random_code
