@@ -1,0 +1,33 @@
+if __FILE__ == $PROGRAM_NAME
+  puts "Input your email"
+  email = gets.chomp
+  user = User.find_by({ email: email })
+
+  puts "What do you want to do?"
+  puts "0. Create shortened URL"
+  puts "1. Visit shortened URL"
+  input = gets.chomp.to_i
+  if input == 0
+    begin
+      puts "Type in your long url"
+      url = gets.chomp
+      short_url = ShortenedUrl.shorten_url(user, url)
+      puts "Short url is: #{short_url.short_url}"
+      puts "Goodbye!"
+    rescue => e
+      puts e.message
+    end
+  else
+    puts "Type in the shortened URL:"
+    short_url = gets.chomp
+
+    url = ShortenedUrl.find_by({ short_url: short_url })
+
+    puts "Launching #{url.long_url.split("/").take(3).join("/")} ..."
+    puts "Goodbye!"
+
+    Visit.record_visit!(user, url)
+
+    Launchy.open(url.long_url)
+  end
+end
