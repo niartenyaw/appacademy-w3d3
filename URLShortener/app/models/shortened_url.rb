@@ -27,11 +27,12 @@ class ShortenedUrl < ActiveRecord::Base
     source: :topic
 
   def self.prune(n)
-    old_urls = ShortenedUrl.all.where('id NOT IN (?)',
-      Visit.all.where(
-        { updated_at: ((n+60).minutes.ago..1.hour.ago) }
-      ).map(&:url_id))
-    old_urls.each { |url| url.destroy }
+    new_visit_ids = Visit.all.where(
+      { updated_at: ((n+60).minutes.ago..1.hour.ago) }).map(&:url_id)
+
+    old_urls = ShortenedUrl.all.where('id NOT IN (?)', new_visit_ids)
+
+    old_urls.each(&:destroy)
   end
 
   def self.random_code
